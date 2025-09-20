@@ -7,8 +7,12 @@ import { z } from "zod";
 const app = express();
 const port = process.env.PORT || 4000;
 
-// CORS: allow your local React dev server
-app.use(cors({ origin: ["http://localhost:5173", "http://localhost:3000"] }));
+// CORS: allow your local React dev server and production domains
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? [process.env.FRONTEND_URL || 'https://your-app.vercel.app']
+  : ["http://localhost:5173", "http://localhost:3000"];
+
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 const SYSTEM_PROMPT = `
