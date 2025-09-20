@@ -1,0 +1,10 @@
+{
+  "name": "chef-claude-server",
+  "version": "1.0.0",
+  "description": "Chef Claude - AI Recipe Generator Server",
+  "scripts": {
+    "start": "cd server && npm run railway",
+    "build": "cd server && npm install",
+    "dev": "cd server && npm run dev"
+  }
+}
