@@ -1,8 +1,6 @@
 export async function getRecipeFromChefClaude(ingredients: string[]): Promise<string> {
   try {
-    const apiUrl = import.meta.env.MODE === 'production' 
-      ? import.meta.env.VITE_API_URL || 'https://your-server.railway.app/api/recipe'
-      : 'http://localhost:4000/api/recipe';
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/recipe';
     
     const response = await fetch(apiUrl, {
       method: 'POST',
