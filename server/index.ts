@@ -16,8 +16,7 @@ console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
 console.log('Allowed origins:', allowedOrigins);
 
-// Temporary: Allow all origins for debugging
-app.use(cors({ origin: true }));
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 const SYSTEM_PROMPT = `
