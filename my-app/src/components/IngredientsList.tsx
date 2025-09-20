@@ -1,4 +1,9 @@
-export default function IngredientsList(props) {
+interface IngredientsListProps {
+    ingredients: string[];
+    toggleRecipeShown: () => void;
+}
+
+export default function IngredientsList(props: IngredientsListProps) {
     const ingredientsListItems = props.ingredients.map(ingredient => (
         <li key={ingredient}>{ingredient}</li>
     ))
