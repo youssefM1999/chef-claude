@@ -9,7 +9,7 @@ const port = process.env.PORT || 4000;
 
 // CORS: allow your local React dev server and production domains
 const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? [process.env.FRONTEND_URL || 'https://your-app.vercel.app']
+  ? process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []
   : ["http://localhost:5173", "http://localhost:3000"];
 
 app.use(cors({ origin: allowedOrigins }));
