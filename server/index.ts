@@ -12,6 +12,10 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
   ? process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []
   : ["http://localhost:5173", "http://localhost:3000"];
 
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+console.log('Allowed origins:', allowedOrigins);
+
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
