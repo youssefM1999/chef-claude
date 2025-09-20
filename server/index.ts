@@ -57,6 +57,15 @@ app.post("/api/recipe", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "Chef Claude API is running",
+    allowedOrigins: allowedOrigins,
+    nodeEnv: process.env.NODE_ENV,
+    frontendUrl: process.env.FRONTEND_URL
+  });
+});
+
 app.listen(port, () => {
   console.log(`API running on http://localhost:${port}`);
 });
