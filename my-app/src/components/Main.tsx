@@ -1,11 +1,12 @@
-import React from "react"
+import { useState, useRef, useEffect } from "react"
 import IngredientsList from "./IngredientsList"
 import ClaudeRecipe from "./ClaudeRecipe"
 import { getRecipeFromChefClaude } from "../ai"
 
 export default function Main() {
-    const [ingredients, setIngredients] = React.useState<string[]>([])
-    const [recipe, setRecipe] = React.useState("")
+    const [ingredients, setIngredients] = useState<string[]>([])
+    const [recipe, setRecipe] = useState("")
+    const recipeSectionRef = useRef<HTMLDivElement>(null)
 
     async function getRecipe() {
         const recipeMarkdown = await getRecipeFromChefClaude(ingredients)
@@ -18,6 +19,18 @@ export default function Main() {
             setIngredients(prevIngredients => [...prevIngredients, newIngredient as string])
         }
     }
+
+    function clearAll() {
+        setIngredients([])
+        setRecipe("")
+    }
+
+    useEffect(() => {
+        if (recipe !== "" && recipeSectionRef.current) {
+            recipeSectionRef.current.scrollIntoView({ behavior: "smooth" })
+        }
+    }, [recipe])
+
 
     return (
         <main>
@@ -38,7 +51,10 @@ export default function Main() {
                 />
             }
 
-            {recipe && <ClaudeRecipe recipe={recipe} />}
+            {recipe && <ClaudeRecipe recipe={recipe} 
+                                     onNewRecipe={clearAll} 
+                                     recipeSectionRef={recipeSectionRef} 
+                        />}
         </main>
     )
 }
