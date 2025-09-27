@@ -65,11 +65,54 @@ main {
 
 ul.ingredients-list {
     margin-bottom: 48px;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    max-width: 300px;
+}
+
+.ingredients-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    gap: 12px;
+    margin-bottom: 8px;
+    border: 1px solid #141413;
+    border-radius: 6px;
+    background-color: white;
+}
+
+.ingredients-list-item:last-child {
+    margin-bottom: 0;
+}
+
+.ingredients-list-item > button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6B7280;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.ingredients-list-item > button:hover {
+    color: #D17557;
+    background-color: #FEF2F2;
 }
 
 ul.ingredients-list > li {
     color: #475467;
     line-height: 28px;
+    flex: 1;
+    margin: 0;
 }
 
 .get-recipe-container {

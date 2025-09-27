@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 export async function getRecipeFromChefClaude(ingredients: string[]): Promise<string> {
   try {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/recipe';

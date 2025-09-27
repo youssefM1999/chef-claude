@@ -20,6 +20,10 @@ export default function Main() {
         }
     }
 
+    function removeIngredient(ingredient: string) {
+        setIngredients(prevIngredients => prevIngredients.filter(i => i !== ingredient))
+    }
+
     function clearAll() {
         setIngredients([])
         setRecipe("")
@@ -48,6 +52,7 @@ export default function Main() {
                 <IngredientsList
                     ingredients={ingredients}
                     toggleRecipeShown={getRecipe}
+                    removeIngredient={removeIngredient}
                 />
             }
 
