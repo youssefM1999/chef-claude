@@ -58,6 +58,7 @@ header button:hover {
 main {
     padding: 30px 30px 10px;
     position: relative;
+    padding-top: 100px;
 }
 
 .add-ingredient-form {
@@ -389,8 +390,7 @@ ul.ingredients-list {
 
 /* Sidebar toggle button styling */
 .sidebar-toggle {
-    position: absolute;
-    top: 20px;
+    position: fixed;
     left: 20px;
     z-index: 1001;
     background-color: #FAFAF8;
@@ -405,11 +405,38 @@ ul.ingredients-list {
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-toggle:hover {
     background-color: #F0F0F0;
     cursor: pointer;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar-toggle {
+        top: 100px;
+        left: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 1.25rem;
+    }
+    
+    main {
+        padding-top: 120px;
+    }
+}
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+    .sidebar-toggle {
+        top: 100px;
+    }
+    
+    main {
+        padding-top: 120px;
+    }
 }
 
 /* Sidebar styling */
