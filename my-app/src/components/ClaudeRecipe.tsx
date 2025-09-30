@@ -1,28 +1,17 @@
 import ReactMarkdown from "react-markdown"
+import type { RecipeResponse } from "../../utils/ai"
 
 interface ClaudeRecipeProps {
-    recipe: string;
+    recipe: RecipeResponse;
     onNewRecipe: () => void;
     recipeSectionRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export default function ClaudeRecipe(props: ClaudeRecipeProps) {
-    function handleSaveRecipe() {
-        console.log("Saving recipe")
-    }
-
-    function handleNewRecipe() {
-        props.onNewRecipe()
-    }
-
     return (
-        <section className="suggested-recipe-container" aria-live="polite">
+        <section className="suggested-recipe-container" aria-live="polite" ref={props.recipeSectionRef}>
             <h2>Chef Claude Recommends:</h2>
-            <ReactMarkdown>{props.recipe}</ReactMarkdown>
-            <div className="suggested-recipe-container-buttons" ref={props.recipeSectionRef}>
-                <button onClick={handleSaveRecipe}>Save Recipe</button>
-                <button onClick={handleNewRecipe}>New Recipe</button>
-            </div>
+            <ReactMarkdown>{props.recipe.recipe}</ReactMarkdown>
         </section>
     )
 }

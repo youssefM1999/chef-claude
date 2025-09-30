@@ -2,10 +2,10 @@
   "name": "server",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --watch . --exec ts-node ./index.ts",
+    "dev": "nodemon --watch . --exec \"node --loader ts-node/esm\" ./index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "railway": "ts-node ./index.ts"
+    "railway": "node --loader ts-node/esm ./index.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.29.0",
