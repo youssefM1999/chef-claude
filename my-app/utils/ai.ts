@@ -10,6 +10,11 @@ export interface RecipeResponse {
     instructions: string;
     macros: string;
   } | null;
+  rateLimit?: {
+    allowed: boolean;
+    remaining: number;
+    reset: number;
+  };
 }
 
 const apiBaseUrl = import.meta.env.DEV ? 'http://localhost:4000/api' : import.meta.env.VITE_API_URL;
@@ -30,17 +35,41 @@ export async function getRecipeFromChefClaude(ingredients: string[]): Promise<Re
       body: JSON.stringify({ ingredients }),
     });
 
+    // Read rate limit from headers
+    const rateLimitInfo = {
+      allowed: response.headers.get('X-RateLimit-Allowed') === 'true',
+      remaining: parseInt(response.headers.get('X-RateLimit-Remaining') || '0'),
+      reset: new Date(response.headers.get('X-RateLimit-Reset') || '0').getTime(),
+    }
+    console.log('Rate limit info:', rateLimitInfo);
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      if (response.status === 429) {
+        return {
+          recipe: 'Sorry, I could not generate a recipe at this time.',
+          recipeData: null,
+          rateLimit: rateLimitInfo
+        };
+      }
+      throw new Error(`Error fetching recipe: ${errorData.error || response.statusText}`);
     }
 
     const data = await response.json();
-    return data;
+    return {
+      ...data,
+      rateLimit: rateLimitInfo
+    };
   } catch (error) {
     console.error('Error fetching recipe:', error);
     return {
       recipe: 'Sorry, I could not generate a recipe at this time.',
-      recipeData: null
+      recipeData: null,
+      rateLimit: {
+        allowed: false,
+        remaining: 0,
+        reset: 0,
+      }
     };
   }
 }

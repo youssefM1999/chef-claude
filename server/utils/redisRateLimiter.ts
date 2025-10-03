@@ -1,7 +1,21 @@
 import Redis from 'ioredis';
 import crypto from 'crypto';
 
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const getRedisConfig = () => {
+    const nodeEnv = process.env.NODE_ENV || 'development';
+
+    if (nodeEnv === 'production') {
+        return {
+            url: process.env.REDIS_URL || 'redis://localhost:6379',
+        }
+    }
+
+    return {
+        url: 'redis://localhost:6379',
+    }
+}
+
+const redis = new Redis(getRedisConfig().url);
 
 export interface RateLimitResponse {
     allowed: boolean;
@@ -27,15 +41,6 @@ export class RedisRateLimiter {
             
             // Count current requests
             pipeline.zcard(key);
-
-            // Add current request
-            const requestId = `${now}-${crypto.randomUUID()}`;
-            pipeline.zadd(key, now, requestId);
-
-            // Set expiry of the entire key (24 hours)
-            // Note: this is to prevent edge cases where the key is not deleted
-            // and to prevent memory leaks
-            pipeline.expire(key, Math.ceil(this.windowMs / 1000));
             
             const results = await pipeline.exec();
             const count = results?.[1]?.[1] as number || 0;
@@ -54,11 +59,19 @@ export class RedisRateLimiter {
                     }
                 }
             }
+
+            // Add current request since limit check passed
+            const requestId = `${now}-${crypto.randomUUID()}`;
+            await redis.zadd(key, now, requestId);
+            
+            // Set expiry of the entire key (24 hours)
+            await redis.expire(key, Math.ceil(this.windowMs / 1000));
+
             return {
                 allowed: true,
-                remaining: this.limit - count,
+                remaining: this.limit - count - 1,
                 reset: now + this.windowMs,
-            }
+            };
 
         } catch (error) {
             console.error('Error checking rate limit:', error);

@@ -388,6 +388,80 @@ ul.ingredients-list {
     margin: 8px 0;
 }
 
+/* Rate limit warning styling */
+.rate-limit-warning {
+    background-color: #FEF3C7;
+    border: 1px solid #F59E0B;
+    border-radius: 8px;
+    margin: 16px 0;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.rate-limit-warning-content {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+}
+
+.rate-limit-warning-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.rate-limit-warning-text {
+    flex: 1;
+}
+
+.rate-limit-warning-text h3 {
+    margin: 0 0 8px 0;
+    color: #92400E;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.rate-limit-warning-text p {
+    margin: 0 0 12px 0;
+    color: #92400E;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.rate-limit-details {
+    display: flex;
+    gap: 16px;
+    font-size: 0.75rem;
+    color: #A16207;
+    font-weight: 500;
+}
+
+.rate-limit-dismiss {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #92400E;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    flex-shrink: 0;
+    transition: background-color 0.2s;
+}
+
+.rate-limit-dismiss:hover {
+    background-color: rgba(146, 64, 14, 0.1);
+}
+
+.rate-limit-dismiss:focus {
+    outline: 2px solid #F59E0B;
+    outline-offset: 2px;
+}
+
 /* Sidebar toggle button styling */
 .sidebar-toggle {
     position: fixed;

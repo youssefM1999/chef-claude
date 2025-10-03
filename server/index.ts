@@ -14,7 +14,15 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
   : ["http://localhost:5173", "http://localhost:3000"];
 
 
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors({ 
+  origin: allowedOrigins,
+  exposedHeaders: [
+    'X-RateLimit-Limit',
+    'X-RateLimit-Allowed', 
+    'X-RateLimit-Remaining',
+    'X-RateLimit-Reset'
+  ]
+}));
 app.use(express.json());
 
 app.use("/api/recipes", recipesRouter);

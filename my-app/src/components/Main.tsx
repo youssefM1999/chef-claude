@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import IngredientsList from "./IngredientsList"
 import ClaudeRecipe from "./ClaudeRecipe"
+import RateLimitWarning from "./RateLimitWarning"
 import { getRecipeFromChefClaude, saveRecipeToDatabase, type RecipeResponse } from "../../utils/ai"
 import Auth from "./Auth"
 import type { User } from "@supabase/supabase-js"
@@ -20,12 +21,26 @@ export default function Main(props: MainProps) {
     const [saveRecipeClicked, setSaveRecipeClicked] = useState(false)
     const [savedRecipes, setSavedRecipes] = useState<DatabaseRecipe[]>([])
     const [cheffing, setCheffing] = useState(false)
+    const [rateLimitInfo, setRateLimitInfo] = useState<{ allowed: boolean; remaining: number; reset: number } | null>(null)
+    const [showRateLimitWarning, setShowRateLimitWarning] = useState(false)
     const recipeSectionRef = useRef<HTMLDivElement>(null)
 
     async function getRecipe() {
         try {
             setCheffing(true)
+            setShowRateLimitWarning(false) // Hide any existing warning
             const recipeResponse = await getRecipeFromChefClaude(ingredients)
+            
+            // Update rate limit info
+            if (recipeResponse.rateLimit) {
+                setRateLimitInfo(recipeResponse.rateLimit)
+                
+                // Show warning if rate limit is reached
+                if (!recipeResponse.rateLimit.allowed) {
+                    setShowRateLimitWarning(true)
+                }
+            }
+            
             setRecipe(recipeResponse)
             setSaveRecipeClicked(false)
         } catch (error) {
@@ -51,6 +66,11 @@ export default function Main(props: MainProps) {
         setIngredients([])
         setRecipe(null)
         setSaveRecipeClicked(false)
+        setShowRateLimitWarning(false)
+    }
+
+    function dismissRateLimitWarning() {
+        setShowRateLimitWarning(false)
     }
 
     function saveRecipe() {
@@ -140,6 +160,13 @@ export default function Main(props: MainProps) {
                         removeIngredient={removeIngredient}
                     />
                 }
+
+                {showRateLimitWarning && rateLimitInfo && (
+                    <RateLimitWarning 
+                        rateLimit={rateLimitInfo} 
+                        onDismiss={dismissRateLimitWarning}
+                    />
+                )}
 
                 {recipeUIFlow()}
             </main>

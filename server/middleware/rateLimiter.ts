@@ -11,7 +11,8 @@ export const recipeRateLimiterMiddleware = async (req: Request, res: Response, n
     const result = await recipeRateLimiter.checkLimit(userId);
     if (!result.allowed) {
       res.set({
-        'X-RateLimit-Limit': process.env.RATE_LIMIT_RECIPES,
+        'X-RateLimit-Limit': process.env.RATE_LIMIT_RECIPES || '10',
+        'X-RateLimit-Allowed': 'false',
         'X-RateLimit-Remaining': result.remaining,
         'X-RateLimit-Reset': new Date(result.reset).toISOString(),
       })
@@ -19,7 +20,8 @@ export const recipeRateLimiterMiddleware = async (req: Request, res: Response, n
     }
 
     res.set({
-      'X-RateLimit-Limit': process.env.RATE_LIMIT_RECIPES,
+      'X-RateLimit-Limit': process.env.RATE_LIMIT_RECIPES || '10',
+      'X-RateLimit-Allowed': 'true',
       'X-RateLimit-Remaining': result.remaining,
       'X-RateLimit-Reset': new Date(result.reset).toISOString(),
     })
