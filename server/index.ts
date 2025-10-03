@@ -7,6 +7,7 @@ import supabase from "./utils/supabase.js";
 import { User } from "@supabase/supabase-js";
 import { StructuredRecipe } from "./types.js";
 import { parseRecipe, RecipeResponse } from "./utils/parse.js";
+import { recipeRateLimiter } from "./utils/redisRateLimiter.js";
 
 declare global {
   namespace Express {
@@ -51,6 +52,35 @@ const authMiddleware = async (req: express.Request, res: express.Response, next:
   }
 };
 
+const recipeRateLimiterMiddleware = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const userId = req.user?.id;
+  if (!userId) {
+    return res.status(401).json({ error: "User not authenticated" });
+  }
+
+  try {
+    const result = await recipeRateLimiter.checkLimit(userId);
+    if (!result.allowed) {
+      res.set({
+        'X-RateLimit-Limit': process.env.RATE_LIMIT_RECIPES,
+        'X-RateLimit-Remaining': result.remaining,
+        'X-RateLimit-Reset': new Date(result.reset).toISOString(),
+      })
+      return res.status(429).json({ error: "Rate limit exceeded" });
+    }
+
+    res.set({
+      'X-RateLimit-Limit': process.env.RATE_LIMIT_RECIPES,
+      'X-RateLimit-Remaining': result.remaining,
+      'X-RateLimit-Reset': new Date(result.reset).toISOString(),
+    })
+    next();
+  } catch (error) {
+    console.error('Error checking rate limit:', error);
+    next();
+  }
+}
+
 const SYSTEM_PROMPT = `
 You are an assistant that receives a list of ingredients that a user has and suggests a recipe they could make with some or all of those ingredients. You don't need to use every ingredient they mention in your recipe. The recipe can include additional ingredients they didn't mention, but try not to include too many extra ingredients. Also provide the macros for the recipe.
 
@@ -75,7 +105,7 @@ const GenerateRecipeBody = z.object({
 });
 
 // Recipe endpoint - requires authentication
-app.post("/api/ai/generate-recipe", authMiddleware, async (req, res) => {
+app.post("/api/ai/generate-recipe", authMiddleware, recipeRateLimiterMiddleware, async (req, res) => {
   try {
     const { ingredients } = GenerateRecipeBody.parse(req.body);
     const ingredientsString = ingredients.join(", ");
